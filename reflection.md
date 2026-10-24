@@ -6,10 +6,19 @@
 
 - Briefly describe your initial UML design.
 
-At first the pet owner will add/select their pet .Then they will give some information regarding their available time, preference and priority. Then they have to choose the type of activity they want to do with their pet .Based on their info the system will generate a daily plan and then they can start doing their acitivity.
-
+Our initial UML design consists of four classes: Owner, Pet, CareTask, and DailyPlanner. The Owner class stores the owner's available time and preferences, while Pet stores pet information and care requirements. CareTask represents individual activities such as feeding, walking, medication, and grooming, including their duration and priority. DailyPlanner coordinates these classes to create a daily care schedule, check time constraints, prioritize tasks, and explain its decisions. The design keeps each class focused on a specific responsibility, making the system easier to implement in Python and integrate with Streamlit.
 
 - What classes did you include, and what responsibilities did you assign to each?
+
+
+Sample Output
+
+Today's Schedule
+================
+6:00 PM - Play with the cat (Daily) [Pending]
+8:00 AM - Morning walk (Daily) [Pending]
+8:30 AM - Breakfast (Daily) [Pending]
+9:00 AM - Feed the cat (Daily) [Pending]
 
 
 **b. Design changes**

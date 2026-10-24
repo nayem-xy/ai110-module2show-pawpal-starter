@@ -1,80 +1,58 @@
 
 from dataclasses import dataclass, field
-from typing import List, Dict, Optional
+from typing import List
 
 
-# 1. Pet: Stores information about a pet and its care needs
+@dataclass
+class Task:
+    description: str
+    time: str
+    frequency: str
+    completed: bool = False
+
+    def mark_complete(self) -> None:
+        """Mark the task as completed."""
+        self.completed = True
+
+
 @dataclass
 class Pet:
-    pet_id: int
     name: str
     species: str
-    age: int
-    care_requirements: List[str] = field(default_factory=list)
+    tasks: List[Task] = field(default_factory=list)
 
-    def get_care_requirements(self) -> List[str]:
-        pass
+    def add_task(self, task: Task) -> None:
+        """Add a task to the pet's task list."""
+        self.tasks.append(task)
 
-    def update_care_requirements(self, requirements: List[str]) -> None:
-        pass
-
-
-# 2. CareTask: Represents an individual pet care activity
-@dataclass
-class CareTask:
-    task_id: int
-    task_name: str
-    duration: int
-    priority: int
-    frequency: str
-    due_time: Optional[str] = None
-    task_type: str = "general"
-
-    def is_due(self) -> bool:
-        pass
-
-    def calculate_priority(self) -> int:
-        pass
-
-    def mark_completed(self) -> None:
-        pass
+    def get_task_count(self) -> int:
+        """Return the number of tasks assigned to the pet."""
+        return len(self.tasks)
 
 
-# 3. Owner: Stores the owner's schedule and preferences
 @dataclass
 class Owner:
-    owner_id: int
-    available_time: int
-    preferences: List[str] = field(default_factory=list)
-    schedule: Dict[str, List[str]] = field(default_factory=dict)
+    name: str
     pets: List[Pet] = field(default_factory=list)
 
-    def get_available_time(self) -> int:
-        pass
-
-    def update_preferences(self, preferences: List[str]) -> None:
-        pass
-
-    def check_availability(self, required_time: int) -> bool:
-        pass
+    def get_all_tasks(self) -> List[Task]:
+        """Return all tasks belonging to the owner's pets."""
+        all_tasks = []
+        for pet in self.pets:
+            all_tasks.extend(pet.tasks)
+        return all_tasks
 
 
-# 4. DailyPlanner: Generates and explains a daily pet care plan
-@dataclass
-class DailyPlanner:
-    plan_date: str
-    tasks: List[CareTask] = field(default_factory=list)
-    total_duration: int = 0
-    reasoning: str = ""
+class Scheduler:
+    def __init__(self, owner: Owner):
+        """Initialize the scheduler with an owner."""
+        self.owner = owner
 
-    def generate_plan(self, owner: Owner, pet: Pet) -> List[CareTask]:
-        pass
+    def get_tasks(self) -> List[Task]:
+        """Retrieve all tasks through the owner."""
+        return self.owner.get_all_tasks()
 
-    def prioritize_tasks(self, tasks: List[CareTask]) -> List[CareTask]:
-        pass
-
-    def check_time_constraints(self, owner: Owner) -> bool:
-        pass
-
-    def explain_plan(self) -> str:
-        pass
+    def organize_tasks(self) -> List[Task]:
+        """Return all tasks for scheduling."""
+        tasks = self.get_tasks()
+        return tasks
