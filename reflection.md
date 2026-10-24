@@ -5,7 +5,12 @@
 **a. Initial design**
 
 - Briefly describe your initial UML design.
+
+At first the pet owner will add/select their pet .Then they will give some information regarding their available time, preference and priority. Then they have to choose the type of activity they want to do with their pet .Based on their info the system will generate a daily plan and then they can start doing their acitivity.
+
+
 - What classes did you include, and what responsibilities did you assign to each?
+
 
 **b. Design changes**
 

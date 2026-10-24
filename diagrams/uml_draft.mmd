@@ -1,0 +1,50 @@
+
+classDiagram
+    class Owner {
+        +int owner_id
+        +int available_time
+        +list preferences
+        +dict schedule
+        +get_available_time()
+        +update_preferences()
+        +check_availability()
+    }
+
+    class Pet {
+        +int pet_id
+        +str name
+        +str species
+        +int age
+        +list care_requirements
+        +get_care_requirements()
+        +update_care_requirements()
+    }
+
+    class CareTask {
+        +int task_id
+        +str task_name
+        +int duration
+        +int priority
+        +str frequency
+        +str due_time
+        +str task_type
+        +is_due()
+        +calculate_priority()
+        +mark_completed()
+    }
+
+    class DailyPlanner {
+        +str plan_date
+        +list tasks
+        +int total_duration
+        +str reasoning
+        +generate_plan()
+        +prioritize_tasks()
+        +check_time_constraints()
+        +explain_plan()
+    }
+
+    Owner "1" --> "0..*" Pet : owns
+    Pet "1" --> "0..*" CareTask : requires
+    Owner "1" --> "1" DailyPlanner : provides constraints
+    DailyPlanner "1" --> "0..*" CareTask : schedules
