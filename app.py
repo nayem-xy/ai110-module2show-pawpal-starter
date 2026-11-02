@@ -167,57 +167,118 @@ if st.button("Generate schedule", type="primary"):
     st.session_state.schedule_generated = True
 
 if st.session_state.schedule_generated:
-    # Retrieve tasks through Scheduler -> Owner.get_all_tasks().
-    all_tasks = scheduler.organize_tasks()
+
+    all_tasks = scheduler.sort_by_time()
 
     if not all_tasks:
         st.info("No tasks scheduled yet. Add a task to get started.")
 
     else:
-        # Sort tasks chronologically by scheduled time.
-        sorted_tasks = sorted(
-            all_tasks,
-            key=lambda task: datetime.strptime(
-                task.time,
-                "%I:%M %p",
-            ),
+        # Check the complete schedule for conflicts.
+        conflicts = scheduler.detect_conflicts()
+
+        if conflicts:
+            st.warning(
+                "Scheduling conflicts detected! Please review these tasks.")
+
+            for conflict in conflicts:
+                st.write(f"⚠️ {conflict}")
+        else:
+            st.success("No scheduling conflicts detected.")
+
+        # Allow users to filter the schedule.
+        st.markdown("### Filter Schedule")
+
+        pet_options = ["All Pets"] + [
+            pet.name for pet in owner.pets
+        ]
+
+        selected_filter_pet = st.selectbox(
+            "Filter by pet",
+            pet_options,
+            key="schedule_pet_filter",
         )
 
-        for index, task in enumerate(sorted_tasks):
-            # Find which pet owns this task.
-            task_pet = next(
-                (
-                    pet for pet in owner.pets
-                    if task in pet.tasks
-                ),
-                None,
+        selected_status = st.selectbox(
+            "Filter by status",
+            ["All Tasks", "Pending", "Completed"],
+            key="schedule_status_filter",
+        )
+
+        # Use Scheduler methods to retrieve filtered tasks.
+        if selected_status == "Pending":
+            filtered_tasks = scheduler.filter_by_status(
+                completed=False
             )
-
-            pet_label = task_pet.name if task_pet else "Unknown pet"
-
-            st.markdown(f"### {task.time} — {task.description}")
-
-            st.write(
-                f"**Pet:** {pet_label}  \n"
-                f"**Frequency:** {task.frequency}  \n"
-                f"**Status:** "
-                f"{'✅ Completed' if task.completed else '⏳ Pending'}"
+        elif selected_status == "Completed":
+            filtered_tasks = scheduler.filter_by_status(
+                completed=True
             )
+        else:
+            filtered_tasks = scheduler.get_tasks()
 
-            # Update the actual Task object when clicked.
-            if not task.completed:
-                if st.button(
-                    "Mark as complete",
-                    key=f"complete_task_{index}",
-                ):
-                    scheduler.complete_task(task)
-                st.rerun()
-            else:
-                st.success("This task is completed.")
+        if selected_filter_pet != "All Pets":
+            pet_tasks = scheduler.filter_by_pet(
+                selected_filter_pet
+            )
+            filtered_tasks = [
+                task for task in filtered_tasks
+                if task in pet_tasks
+            ]
 
-            st.divider()
+        # Keep the filtered results in chronological order.
+        sorted_tasks = [
+            task for task in all_tasks
+            if task in filtered_tasks
+        ]
+
+        st.markdown("### Scheduled Tasks")
+
+        if not sorted_tasks:
+            st.info("No tasks match your selected filters.")
+
+        else:
+            for index, task in enumerate(sorted_tasks):
+
+                # Identify the pet assigned to this task.
+                task_pet = next(
+                    (
+                        pet for pet in owner.pets
+                        if task in pet.tasks
+                    ),
+                    None,
+                )
+
+                pet_label = (
+                    task_pet.name if task_pet else "Unknown pet"
+                )
+
+                st.markdown(
+                    f"### {task.due_date.strftime('%b %d, %Y')} "
+                    f"— {task.time} — {task.description}"
+                )
+
+                st.write(
+                    f"**Pet:** {pet_label}  \n"
+                    f"**Frequency:** {task.frequency}  \n"
+                    f"**Status:** "
+                    f"{'✅ Completed' if task.completed else '⏳ Pending'}"
+                )
+
+                if not task.completed:
+                    if st.button(
+                        "Mark as complete",
+                        key=f"complete_task_{index}",
+                    ):
+                        scheduler.complete_task(task)
+                        st.rerun()
+                else:
+                    st.success("This task is completed.")
+
+                st.divider()
 
         st.caption(
-            f"Showing {len(all_tasks)} task(s) across "
+            f"Showing {len(sorted_tasks)} of "
+            f"{len(all_tasks)} task(s) across "
             f"{len(owner.pets)} pet(s)."
         )

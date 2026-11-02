@@ -74,14 +74,14 @@ Showing 3 task(s) across 2 pet(s)
 
 ```bash
 # Run the full test suite:
-pytest
+python3 -m pytest -v
 
 # Run with coverage:
-pytest --cov
+python3 -m pytest --cov
 ```
 
 Sample test output:
-
+16 passed in 0.02s
 ```
 # Paste your pytest output here
 ```
@@ -118,16 +118,16 @@ Describe your app in numbered steps so a reader can follow along without watchin
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
 
-Implementation Summary
+**Implementation Summary**
 
 PawPal+ is a pet care scheduling application built with Python and Streamlit. It uses four main classes:
 
-Task: Represents a care activity with a description, scheduled time, frequency, and completion status. Its mark_complete() method updates the task's status.
+Task: Represents a care activity with a description, scheduled time, frequency, completion status, and due date. Its mark_complete() method updates the task's status, while next_occurrence() creates the next task for daily or weekly schedules.
 
 Pet: Stores pet information and its assigned tasks. Its add_task() method adds tasks, while get_task_count() returns the number of assigned tasks.
 
 Owner: Stores the owner's information and manages multiple pets. Its add_pet() method adds a pet, and get_all_tasks() collects tasks across all pets.
 
-Scheduler: Uses the Owner object to retrieve all tasks and organize them chronologically.
+Scheduler: Uses the Owner object to retrieve tasks, sort them by date and time, filter them by pet or completion status, complete tasks, and detect scheduling conflicts.
 
 The Streamlit interface connects the backend classes to interactive forms and buttons. Streamlit's session state preserves the Owner object and associated pet and task data across normal app reruns.
