@@ -125,7 +125,7 @@ class Scheduler:
         return None
 
     def detect_conflicts(self) -> List[str]:
-        """Return warnings for tasks scheduled at the same time."""
+        """Find pending tasks scheduled at the same date and time."""
         tasks_by_time = {}
 
         for pet in self.owner.pets:
@@ -133,21 +133,22 @@ class Scheduler:
                 if task.completed:
                     continue
 
-                # Convert the time to a consistent format for comparison.
                 normalized_time = datetime.strptime(
                     task.time, "%I:%M %p"
                 ).strftime("%I:%M %p")
 
-                if normalized_time not in tasks_by_time:
-                    tasks_by_time[normalized_time] = []
+                conflict_key = (task.due_date, normalized_time)
 
-                tasks_by_time[normalized_time].append(
+                if conflict_key not in tasks_by_time:
+                    tasks_by_time[conflict_key] = []
+
+                tasks_by_time[conflict_key].append(
                     (pet.name, task.description)
                 )
 
         warnings = []
 
-        for scheduled_time, tasks in tasks_by_time.items():
+        for (due_date, scheduled_time), tasks in tasks_by_time.items():
             if len(tasks) > 1:
                 task_details = ", ".join(
                     f"{description} ({pet_name})"
@@ -155,7 +156,8 @@ class Scheduler:
                 )
 
                 warnings.append(
-                    f"Conflict at {scheduled_time}: {task_details}"
+                    f"Conflict on {due_date} at {scheduled_time}: "
+                    f"{task_details}"
                 )
 
         return warnings

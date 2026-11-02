@@ -211,7 +211,7 @@ if st.session_state.schedule_generated:
                     key=f"complete_task_{index}",
                 ):
                     scheduler.complete_task(task)
-                    st.rerun()
+                st.rerun()
             else:
                 st.success("This task is completed.")
 

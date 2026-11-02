@@ -40,7 +40,7 @@ Today's Schedule
 - Describe one tradeoff your scheduler makes.
 - Why is that tradeoff reasonable for this scenario?
 
----
+---One tradeoff I made in my scheduler was using exact-time matching for conflict detection instead of checking whether task durations overlap. This approach is easier to implement and understand, and it allows the scheduler to warn users when two tasks are scheduled for the same time. However, it cannot identify situations where one task starts before another task finishes. A more advanced version could include task durations and compare the time intervals. I decided to start with exact-time matching to keep the scheduling logic simple and manageable.
 
 ## 3. AI Collaboration
 

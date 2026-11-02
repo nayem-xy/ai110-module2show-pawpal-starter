@@ -95,13 +95,15 @@ test_pawpal_system.py::test_task_addition PASSED
 
 > Fill in once you've implemented scheduling logic.
 
-| Feature | Method(s) | Notes |
-|---------|-----------|-------|
-| Task sorting | | e.g., by priority, duration |
-| Filtering | | e.g., skip tasks if time runs out |
-| Conflict handling | | e.g., overlapping time slots |
-| Recurring tasks | | e.g., daily vs. weekly |
+Feature	Method	Behavior
+Sorting	Scheduler.sort_by_time()	Sorts tasks by due date and time
+Filtering	Scheduler.filter_by_pet()	Filters tasks by pet name
+Filtering	Scheduler.filter_by_status()	Filters completed or pending tasks
+Recurring tasks	Task.next_occurrence()	Creates the next daily or weekly task
+Completing tasks	Scheduler.complete_task()	Marks a task complete and adds its next occurrence
+Conflict detection	Scheduler.detect_conflicts()	Warns about matching times among pending tasks
 
+One limitation to document: conflict detection checks exact time matches, not overlapping task durations.
 ## 📸 Demo Walkthrough
 
 Describe your app in numbered steps so a reader can follow along without watching a video:
