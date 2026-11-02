@@ -1,72 +1,89 @@
 
-from diagrams.pawpal_system import Task, Pet
+from datetime import date
+
 from diagrams.pawpal_system import Task, Pet, Owner, Scheduler
 
 
 def main():
-    # Create tasks for each pet
+    # Create tasks in a deliberately mixed-up order.
     dog_tasks = [
+        Task("Dinner", "6:00 PM", "Daily"),
         Task("Morning walk", "8:00 AM", "Daily"),
-        Task("Breakfast", "8:30 AM", "Daily"),
+        Task("Vet appointment", "10:00 AM", "Once"),
     ]
 
     cat_tasks = [
-        Task("Feed the cat", "9:00 AM", "Daily"),
         Task("Play with the cat", "6:00 PM", "Daily"),
+        Task("Breakfast", "9:00 AM", "Daily"),
     ]
 
-    # Create at least two pets
+    # Create two pets.
     dog = Pet(name="Buddy", species="Dog", tasks=dog_tasks)
     cat = Pet(name="Luna", species="Cat", tasks=cat_tasks)
 
-    # Create an owner with both pets
+    # Create the owner and scheduler.
     owner = Owner(name="Nayem", pets=[dog, cat])
-
-    # Create the scheduler
     scheduler = Scheduler(owner)
 
-    # Retrieve tasks across all pets
-    tasks = scheduler.get_tasks()
-
-    # Print today's schedule
-    print("Today's Schedule")
+    # 1. Display tasks in chronological order.
+    print("\nTODAY'S SCHEDULE")
     print("================")
 
-    for task in sorted(tasks, key=lambda t: t.time):
+    for task in scheduler.sort_by_time():
         status = "Completed" if task.completed else "Pending"
         print(
             f"{task.time} - {task.description} "
             f"({task.frequency}) [{status}]"
         )
 
+    # 2. Display only Buddy's tasks.
+    print("\nBUDDY'S TASKS")
+    print("=============")
+
+    for task in scheduler.filter_by_pet("Buddy"):
+        print(f"{task.time} - {task.description}")
+
+    # 3. Display pending tasks.
+    print("\nPENDING TASKS")
+    print("============")
+
+    for task in scheduler.filter_by_status(completed=False):
+        print(f"{task.time} - {task.description}")
+
+    # 4. Complete a daily task and check its next occurrence.
+    print("\nRECURRING TASK")
+    print("==============")
+
+    morning_walk = dog.tasks[1]
+    next_task = scheduler.complete_task(morning_walk)
+
+    print(f"Completed: {morning_walk.description}")
+
+    if next_task:
+        print(
+            f"Next occurrence: {next_task.due_date} "
+            f"at {next_task.time}"
+        )
+
+    # 5. Check for scheduling conflicts.
+    print("\nSCHEDULING CONFLICTS")
+    print("====================")
+
+    conflicts = scheduler.detect_conflicts()
+
+    if conflicts:
+        for warning in conflicts:
+            print(f"WARNING: {warning}")
+    else:
+        print("No scheduling conflicts found.")
+
+    # 6. Show the total number of tasks.
+    print("\nTOTAL TASKS")
+    print("===========")
+    print(f"Owner: {owner.name}")
+    print(f"Pets: {len(owner.pets)}")
+    print(f"Tasks: {len(scheduler.get_tasks())}")
+
 
 if __name__ == "__main__":
     main()
-
-
-def test_task_completion():
-    task = Task("Morning walk", "8:00 AM", "Daily")
-
-    assert task.completed is False
-
-    task.mark_complete()
-
-    assert task.completed is True
-    print("PASS: Task completion works!")
-
-
-def test_task_addition():
-    pet = Pet("Buddy", "Dog")
-
-    initial_count = pet.get_task_count()
-
-    pet.add_task(Task("Breakfast", "8:30 AM", "Daily"))
-
-    assert pet.get_task_count() == initial_count + 1
-    print("PASS: Adding a task increases the task count!")
-
-
-if __name__ == "__main__":
-    test_task_completion()
-    test_task_addition()
-    print("All tests passed!")

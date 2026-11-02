@@ -45,14 +45,30 @@ pip install -r requirements.txt
 ## 🖥️ Sample Output
 
 Paste a sample of your app's CLI or Streamlit output here so a reader can see what a generated plan looks like:
+Pet Owner: Jordan
 
-```
-# e.g.:
-# Daily plan for Biscuit (Golden Retriever):
-#   08:00 — Morning walk (30 min) [priority: high]
-#   09:00 — Feeding (10 min) [priority: high]
-#   ...
-```
+Registered Pets:
+- Mochi — Dog
+- Luna — Cat
+
+Daily Schedule:
+
+08:00 AM — Morning walk
+Pet: Mochi
+Frequency: Daily
+Status: Pending
+
+09:00 AM — Feeding
+Pet: Luna
+Frequency: Daily
+Status: Pending
+
+06:00 PM — Dinner
+Pet: Mochi
+Frequency: Daily
+Status: Pending
+
+Showing 3 task(s) across 2 pet(s)
 
 ## 🧪 Testing PawPal+
 
@@ -69,6 +85,11 @@ Sample test output:
 ```
 # Paste your pytest output here
 ```
+test_pawpal_system.py::test_task_completion PASSED
+test_pawpal_system.py::test_task_addition PASSED
+
+========================= 2 passed =========================
+
 
 ## 📐 Smarter Scheduling
 
@@ -85,10 +106,26 @@ Sample test output:
 
 Describe your app in numbered steps so a reader can follow along without watching a video:
 
-1. <!-- Describe this step -->
-2. <!-- Describe this step -->
-3. <!-- Describe this step -->
-4. <!-- Describe this step -->
-5. <!-- Add more steps as needed -->
+1. <!-- Describe this step --> Launch the application using python3 -m streamlit run app.py.
+2. <!-- Describe this step --> Enter or update the pet owner's name.
+3. <!-- Describe this step --> Add pets by providing their names and species. The application stores them through the Owner.add_pet() method.
+4. <!-- Describe this step -->Select a pet and create care tasks by entering a description, scheduled time, and frequency. The tasks are added through the Pet.add_task() method.
+5. <!-- Add more steps as needed --> Click Generate schedule to retrieve tasks across all pets through the Scheduler and display them in chronological order.
+6.Click Mark as complete beside a pending task to update its completion status.
+7.Review the updated schedule and completion status.
 
 **Screenshot or video** *(optional)*: <!-- Insert a screenshot or link to a demo video here -->
+
+Implementation Summary
+
+PawPal+ is a pet care scheduling application built with Python and Streamlit. It uses four main classes:
+
+Task: Represents a care activity with a description, scheduled time, frequency, and completion status. Its mark_complete() method updates the task's status.
+
+Pet: Stores pet information and its assigned tasks. Its add_task() method adds tasks, while get_task_count() returns the number of assigned tasks.
+
+Owner: Stores the owner's information and manages multiple pets. Its add_pet() method adds a pet, and get_all_tasks() collects tasks across all pets.
+
+Scheduler: Uses the Owner object to retrieve all tasks and organize them chronologically.
+
+The Streamlit interface connects the backend classes to interactive forms and buttons. Streamlit's session state preserves the Owner object and associated pet and task data across normal app reruns.
